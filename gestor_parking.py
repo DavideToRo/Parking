@@ -57,7 +57,7 @@ def leer_matricula(ruta_imagen):
 
 def leer_matriculas_entrada(coches):
     ruta_carpeta="entrada"
-    ficheros=os.listdir(ruta_carpeta)
+    ficheros=os.listdir(ruta_carpeta)#devuelve una lista con el nombre de las imagenes
 
     for fichero in ficheros:
         ruta_imagen=os.path.join(ruta_carpeta,fichero)
@@ -66,12 +66,12 @@ def leer_matriculas_entrada(coches):
         matricula=leer_matricula(ruta_imagen)
 
         if matricula == "":
-            print('No hay matricula detectada')
+            print('No hay matricula detectada')#de esta nabera dectariamos si no detectarta matricula pero no nos ha pasado
         else:
             fecha_hora_actual = datetime.now().strftime("%d/%m/%Y %H:%M")
             coches[matricula]=fecha_hora_actual
             #print('Matricula detectada',matricula)
-            print(f'Fecha y hora actual: {fecha_hora_actual}')
+            #print(f'Fecha y hora actual: {fecha_hora_actual}') #una vez que vemos que funciona lo dejamos comentado
             os.remove(ruta_imagen)#eliminamos la imagen por lo que mas me vale acordarme de copiarla y no moverla a entradas
 
     return coches
@@ -81,7 +81,9 @@ def actualizar_entradas(coches):
 
     with open("entradas.txt","w") as archivo:
         for matricula,fecha_hora in coches.items():
-            archivo.write(f'{matricula};{fecha_hora}\n')
+            archivo.write(f'{matricula};{fecha_hora}\n')#utilamos el ; como separador
+
+
 
 def leer_entradas():
     fichero_entradas="entradas.txt"
@@ -89,17 +91,17 @@ def leer_entradas():
 
     if not os.path.exists(fichero_entradas):
         with open(fichero_entradas, "w") as archivo:
-            pass  
+            pass
 
 
     with open(fichero_entradas, "r") as archivo:
-        lineas = archivo.readlines()
+        lineas = archivo.readlines()#lee todas las lineas del archivo y las devuelve como una lista de string
 
-        for linea in lineas:
+        for linea in lineas:#recorremos la lista
             linea = linea.strip()  # Quitamos espacios y saltos de línea
-            if ";" in linea:  # Solo procesamos líneas válidas
+            if ";" in linea:  #Entendemos que es una line valida si contiene un ; y se procesa
                 matricula, fecha_hora = linea.split(";")
-                coches[matricula] = fecha_hora  # Guarda en el diccionario
+                coches[matricula] = fecha_hora  #guardamos en el diccionario clave=matricula y valor=fecha_hora
 
     return coches
 
@@ -163,21 +165,21 @@ if __name__ == '__main__':
     coches = leer_entradas()
 
 
-    # 2️⃣ Procesar nuevas entradas
+
     coches_nuevas_entradas = leer_matriculas_entrada(coches)
-    print(f"✅ Coches después de procesar entradas: {coches_nuevas_entradas}")
 
-    # 3️⃣ Procesar salidas
+
+
     coches_nuevas_salidas, salidas_detectadas = leer_matriculas_salida(coches_nuevas_entradas)
-    print(f"🚪 Coches después de procesar salidas: {coches_nuevas_salidas}")
 
-    # 4️⃣ Guardar la lista de coches actualizada en `entradas.txt`
+
+
     actualizar_entradas(coches_nuevas_salidas)
-    print("💾 `entradas.txt` actualizado con los coches que siguen en el parking.")
 
-    # 5️⃣ Guardar las salidas en `salidas.txt`
+
+
     actualizar_salidas(salidas_detectadas)
-    print("📄 `salidas.txt` actualizado con las salidas registradas.")
+
 
 
 
