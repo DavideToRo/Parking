@@ -1,15 +1,18 @@
-# Cambiar esta URL por la de nuestro endpoint
+
 import os
+import shutil
 from datetime import datetime
 
 import requests
-
-
 import re
 
-URL = 'https://pruebavision22.cognitiveservices.azure.com/computervision/imageanalysis:analyze'
+from dotenv import load_dotenv
 
-KEY = '8HAXyEDdxF4DfHWlGq984Xy6bxDsnI67UX7983NM4mwCtFrCEKwRJQQJ99BBAC5RqLJXJ3w3AAAFACOGAsUt'
+load_dotenv()
+
+URL = os.getenv("URL")
+KEY = os.getenv("KEY")
+
 
 def leer_matricula(ruta_imagen):
 
@@ -72,6 +75,12 @@ def leer_matriculas_entrada(coches):
             coches[matricula]=fecha_hora_actual
             #print('Matricula detectada',matricula)
             #print(f'Fecha y hora actual: {fecha_hora_actual}') #una vez que vemos que funciona lo dejamos comentado
+            carpeta_copia_="entradas_copia"
+            os.makedirs(carpeta_copia_, exist_ok=True)#si no existe crea la carptera
+            ruta_copia=os.path.join(carpeta_copia_,fichero)
+            shutil.copy(ruta_imagen,ruta_copia)#copiamos la imagen
+
+
             os.remove(ruta_imagen)#eliminamos la imagen por lo que mas me vale acordarme de copiarla y no moverla a entradas
 
     return coches
@@ -130,9 +139,7 @@ def leer_matriculas_salida(coches):
             tarifa=total_minutos*(6/60)
             tarifa=round(tarifa,2)#redondeamoa a 2 decimales por si acaso
 
-            '''se que e los apuntes nos diste el consejo de hacerlo asi, pero lo vi mas complicado que dividir el total por el precio hora minutos
 
-            diferencia = tiempo_salida - tiempo_entradaprint("Horas de diferencia:", diferencia.total_seconds() // 3600)'''
 
             salidas[matricula]=[hora_entrada,hora_salida,tarifa]
             print(f'matricula {matricula} registrada en salidas.txt con tarifa {tarifa}')
@@ -157,28 +164,22 @@ def actualizar_salidas(salidas):
             archivo.write(f'{matricula};{hora_entrada};{hora_salida};{tarifa}\n')
 
 
-
-if __name__ == '__main__':
-
-
-
+def main():
     coches = leer_entradas()
-
-
 
     coches_nuevas_entradas = leer_matriculas_entrada(coches)
 
-
-
     coches_nuevas_salidas, salidas_detectadas = leer_matriculas_salida(coches_nuevas_entradas)
-
-
 
     actualizar_entradas(coches_nuevas_salidas)
 
-
-
     actualizar_salidas(salidas_detectadas)
+
+
+if __name__ == '__main__':
+    main()
+
+
 
 
 
